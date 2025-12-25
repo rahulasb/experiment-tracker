@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from './AuthProvider';
+import UserMenu from './UserMenu';
 
 export default function Navbar() {
     const pathname = usePathname();
+    const { user } = useAuth();
 
     return (
         <nav className="bg-[#0a0a0a] border-b border-neutral-800/50">
@@ -33,24 +36,30 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        <div className="hidden md:flex items-center gap-1">
-                            <Link
-                                href="/"
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === '/'
-                                        ? 'bg-neutral-800 text-neutral-100'
-                                        : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'
-                                    }`}
-                            >
-                                Dashboard
-                            </Link>
-                        </div>
+                        {user && (
+                            <div className="hidden md:flex items-center gap-1">
+                                <Link
+                                    href="/"
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === '/'
+                                            ? 'bg-neutral-800 text-neutral-100'
+                                            : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'
+                                        }`}
+                                >
+                                    Dashboard
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            <span className="text-xs text-neutral-400">Connected</span>
-                        </div>
+                        {user ? (
+                            <UserMenu />
+                        ) : (
+                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800">
+                                <div className="w-2 h-2 rounded-full bg-neutral-600"></div>
+                                <span className="text-xs text-neutral-500">Not signed in</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

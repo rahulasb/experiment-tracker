@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Project } from '@/types/database';
+import { useAuth } from '@/components/AuthProvider';
+import AuthForm from '@/components/AuthForm';
 import ProjectCard from '@/components/ProjectCard';
 import CreateProjectModal from '@/components/CreateProjectModal';
 
 export default function Dashboard() {
+  const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [experimentCounts, setExperimentCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -14,10 +17,13 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchProjects = async () => {
+    if (!user) return;
+
     try {
       const { data, error: supabaseError } = await supabase
         .from('projects')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (supabaseError) throw supabaseError;
@@ -43,13 +49,31 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (user) {
+      fetchProjects();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [user, authLoading]);
 
   const handleProjectCreated = (newProject: Project) => {
     setProjects((prev) => [newProject, ...prev]);
     setExperimentCounts((prev) => ({ ...prev, [newProject.id]: 0 }));
   };
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-neutral-400 border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
+  if (!user) {
+    return <AuthForm />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -167,6 +191,7 @@ export default function Dashboard() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleProjectCreated}
+        userId={user.id}
       />
     </div>
   );

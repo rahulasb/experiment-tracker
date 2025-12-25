@@ -8,9 +8,10 @@ interface CreateProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: (project: Project) => void;
+    userId: string;
 }
 
-export default function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProjectModalProps) {
+export default function CreateProjectModal({ isOpen, onClose, onSuccess, userId }: CreateProjectModalProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
@@ -22,9 +23,10 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
         setError(null);
 
         try {
-            const projectData: CreateProject = {
+            const projectData: CreateProject & { user_id: string } = {
                 name: name.trim(),
                 description: description.trim() || undefined,
+                user_id: userId,
             };
 
             const { data, error: supabaseError } = await supabase
