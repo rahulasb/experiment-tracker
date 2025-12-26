@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Project } from '@/types/database';
 import { useAuth } from '@/components/AuthProvider';
-import AuthForm from '@/components/AuthForm';
+import LandingPage from '@/components/LandingPage';
 import ProjectCard from '@/components/ProjectCard';
 import CreateProjectModal from '@/components/CreateProjectModal';
 
@@ -70,9 +70,9 @@ export default function Dashboard() {
     );
   }
 
-  // Show login form if not authenticated
+  // Show landing page if not authenticated
   if (!user) {
-    return <AuthForm />;
+    return <LandingPage />;
   }
 
   return (

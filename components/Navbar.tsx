@@ -41,8 +41,8 @@ export default function Navbar() {
                                 <Link
                                     href="/"
                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === '/'
-                                            ? 'bg-neutral-800 text-neutral-100'
-                                            : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'
+                                        ? 'bg-neutral-800 text-neutral-100'
+                                        : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'
                                         }`}
                                 >
                                     Dashboard
@@ -55,10 +55,12 @@ export default function Navbar() {
                         {user ? (
                             <UserMenu />
                         ) : (
-                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800">
-                                <div className="w-2 h-2 rounded-full bg-neutral-600"></div>
-                                <span className="text-xs text-neutral-500">Not signed in</span>
-                            </div>
+                            <Link
+                                href="/auth"
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-100 text-neutral-900 font-medium text-sm hover:bg-white transition-all hover:-translate-y-0.5"
+                            >
+                                Sign In
+                            </Link>
                         )}
                     </div>
                 </div>
